@@ -44,6 +44,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
     private MediaPlayer mpDie;
     private MediaPlayer mpHit;
     private MediaPlayer mpWing;
+    private MediaPlayer mpDieTest;
 
     public GameManager(Context context, AttributeSet attributeSet) {
         super(context);
@@ -73,9 +74,10 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
     private void initSounds() {
         mpPoint = MediaPlayer.create(getContext(), R.raw.point);
         mpSwoosh = MediaPlayer.create(getContext(), R.raw.swoosh);
-        mpDie = MediaPlayer.create(getContext(), R.raw.die);
+        //mpDie = MediaPlayer.create(getContext(), R.raw.die);
         mpHit = MediaPlayer.create(getContext(), R.raw.hit);
         mpWing = MediaPlayer.create(getContext(), R.raw.wing);
+        mpDieTest = MediaPlayer.create(getContext(), R.raw.dietest);
     }
 
     @Override
@@ -238,7 +240,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
             mpHit.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {
-                    mpDie.start();
+                    mpDieTest.start();
                 }
             });
         }

@@ -23,7 +23,7 @@ public class Obstacle implements sprite{
 
 
     public Obstacle(Resources resources, int screenHeight, int screenWidth, ObstacleCallback callback){
-        image = BitmapFactory.decodeResource(resources, R.drawable.pipes);
+        image = BitmapFactory.decodeResource(resources, R.drawable.testpipe); //changed from pipes to testpipe
         this.screenHeight = screenHeight;
         this.screenWidth = screenWidth;
         this.callback = callback;

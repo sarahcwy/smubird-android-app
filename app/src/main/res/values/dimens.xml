@@ -10,8 +10,8 @@
     <dimen name="obstacle_width">100dp</dimen>
     <dimen name="obstacle_separation">275dp</dimen>
     <dimen name="obstacle_speed">5dp</dimen>
-    <dimen name="head_height">30dp</dimen>
-    <dimen name="head_extra_width">20dp</dimen>
+    <dimen name="head_height">0dp</dimen>     //original 30
+    <dimen name="head_extra_width">0dp</dimen> //original 20
     <dimen name="obstacle_min_position">100dp</dimen>
     <dimen name="obstacle_interval">350dp</dimen>
 </resources>
