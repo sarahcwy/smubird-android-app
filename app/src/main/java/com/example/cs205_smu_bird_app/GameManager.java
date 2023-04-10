@@ -73,6 +73,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         gameMessage = new GameMessage(getResources(), dm.heightPixels, dm.widthPixels);
         scoreSprite = new Score(getResources(), dm.heightPixels, dm.widthPixels);
 
+
     }
 
     private void initSounds() {
@@ -82,6 +83,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         mpHit = MediaPlayer.create(getContext(), R.raw.hit);
         mpWing = MediaPlayer.create(getContext(), R.raw.wing);
         mpDieTest = MediaPlayer.create(getContext(), R.raw.dietest);
+
     }
 
     @Override
