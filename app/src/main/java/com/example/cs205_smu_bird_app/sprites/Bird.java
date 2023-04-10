@@ -25,6 +25,8 @@ public class Bird implements sprite{
     private int screenHeight;
     private GameManagerCallback callback;
 
+    //Test for Rotation
+
     //bird Constructor
     public Bird(Resources resources, int screenHeight, GameManagerCallback callback) {
         this.screenHeight = screenHeight;
@@ -78,6 +80,7 @@ public class Bird implements sprite{
     public void onTouchEvent() {
         if (!collision) {
             currentFallingSpeed = flappyBoost;
+
         }
     }
     public void collision() {

@@ -173,11 +173,11 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
     public boolean onTouchEvent(MotionEvent event) {
         switch (gameState) {
             case PLAYING:
-                bird.onTouchEvent();
-                mpWing.start();
+               bird.onTouchEvent();
 
-                //vibrator doesnt seem to work
-                vibrator.vibrate(1000);
+                mpWing.start();
+                vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE)); // Vibrate for 100 milliseconds
+
                 break;
 
             case INITIAL:
