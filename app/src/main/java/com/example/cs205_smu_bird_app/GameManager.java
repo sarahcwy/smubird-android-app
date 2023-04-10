@@ -4,12 +4,14 @@ import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
 import android.media.MediaPlayer;
+import android.os.VibrationEffect;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
 import android.view.SurfaceView;
 import android.view.SurfaceHolder;
 import android.util.DisplayMetrics;
 import android.app.Activity;
+import android.os.Vibrator;
 
 import com.example.cs205_smu_bird_app.sprites.Bird;
 import com.example.cs205_smu_bird_app.sprites.Background;
@@ -45,6 +47,8 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
     private MediaPlayer mpHit;
     private MediaPlayer mpWing;
     private MediaPlayer mpDieTest;
+
+    Vibrator vibrator = getContext().getSystemService(Vibrator.class);
 
     public GameManager(Context context, AttributeSet attributeSet) {
         super(context);
@@ -169,6 +173,9 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
             case PLAYING:
                 bird.onTouchEvent();
                 mpWing.start();
+
+                //vibrator doesnt seem to work
+                vibrator.vibrate(1000);
                 break;
 
             case INITIAL:
