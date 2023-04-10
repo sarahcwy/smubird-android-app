@@ -1,6 +1,7 @@
 # cs205-g1-t5
 
-ChangeLog At A Glance
+ChangeLog At A Glance  
+Current Most Updated Branch: V0.1  
 
 Master: First Push -> Contains entire app with sounds, and some basic threading. Kanban created  
 
