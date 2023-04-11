@@ -10,3 +10,6 @@ V0.1: Second Push, new Branch V0.1 -> Implementation of Google Ads (Its an accep
 HEAD  
 V0.1: Third Push -> Implementation of MultiThreading to play BGM Audio within MainActivity.java  
 V0.1: 4th Push -> Implemented code to vibrate everytime onTouch (Doesnt work on mine idk why)
+V0.1: 5th Push -> Fixed Vibration Bug (Still doesnt vibrate on mine), Brought version forward inline with project requirements
+
+branchTest (or testBranch) has layout code.. issue is that it works except i dont see the button 
