@@ -1,7 +1,5 @@
     package com.example.cs205_smu_bird_app;
 
-    import androidx.appcompat.app.AppCompatActivity;
-
     import android.app.Activity;
     import android.content.Intent;
     import android.os.Bundle;
@@ -22,15 +20,24 @@
         private boolean isMusicMuted = false; // Flag to keep track of music mute status
 
 
+        private static final int REQUEST_CODE_TEST_OPTIONS = 1; // You can choose any integer value for this constant
+
         public void openOptions(){
             Intent intent = new Intent(this, testOptions.class);
-            intent.putExtra("isMusicMuted", isMusicMuted); // Pass the current value of isMusicMuted to child activity
-            startActivity(intent);  //start activity and wait for result
+            startActivityForResult(intent, REQUEST_CODE_TEST_OPTIONS);  //start activity and wait for result
         }
-        public boolean getMusicResult(){
-            Intent intent = getIntent();
-            return intent.getBooleanExtra("isMusicMuted", isMusicMuted);
+
+        public void onActivityResult(int requestCode, int resultCode, Intent data) {
+            super.onActivityResult(requestCode, resultCode, data);
+            if (requestCode == REQUEST_CODE_TEST_OPTIONS && resultCode == RESULT_OK) {
+                // Retrieve the value of isMusicMuted from testOptions activity
+
+                isMusicMuted = data.getBooleanExtra("isMusicMuted", isMusicMuted);
+
+            }
+
         }
+
 
 
         @Override       //load activity
@@ -55,7 +62,7 @@
                     mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.bgm);
                     mediaPlayer.setLooping(true); // Set audio to loop
 
-                    boolean musicResult= getMusicResult();
+                    boolean musicResult= isMusicMuted;
 
                     if (musicResult == true) {
                         mediaPlayer.pause();

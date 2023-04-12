@@ -24,7 +24,7 @@ public class testOptions extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_testoptions);
 
-        isMusicMuted = getIntent().getBooleanExtra("isMusicMuted", false);      //grab val from parent (yes i tried piping, didnt work)
+        isMusicMuted = false;      //grab val from parent (yes i tried piping, didnt work)
         muteMusic = (Button) findViewById(R.id.mute_button);
         updateButtonText();     //update value based on initial
         muteMusic.setOnClickListener(new View.OnClickListener() {
@@ -33,8 +33,6 @@ public class testOptions extends AppCompatActivity {
 
                 isMusicMuted = !isMusicMuted; // Toggle the value of isMusicMuted
 
-//                Intent intent = new Intent(testOptions.this, MainActivity.class);
-//                intent.putExtra("isMusicMuted", isMusicMuted);
                 updateButtonText();
 
             }
@@ -44,14 +42,7 @@ public class testOptions extends AppCompatActivity {
         back2Game.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(testOptions.this, MainActivity.class);
-                if (muteMusic.getText() == "Unmute Music"){
-                        intent.putExtra("isMusicMuted", true);
-                }
-                else {
-                    intent.putExtra("isMusicMuted", false);
-                }
-                onBackPressed();
+                onBackPressed2();
             }
         });
 
@@ -82,4 +73,12 @@ public class testOptions extends AppCompatActivity {
         }
     }
 
+
+    public void onBackPressed2() {
+        Intent intent = new Intent();
+        intent.putExtra("isMusicMuted", isMusicMuted);
+        setResult(RESULT_OK, intent);
+        super.onBackPressed();
+
+    }
 }
