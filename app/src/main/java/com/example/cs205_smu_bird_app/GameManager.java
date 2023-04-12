@@ -175,7 +175,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
             case PLAYING:
                 bird.onTouchEvent();
                 mpWing.start();
-                vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE * 2)); // Vibrate for 100 milliseconds
+                vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE)); // Vibrate for 100 milliseconds
 
                 break;
 
