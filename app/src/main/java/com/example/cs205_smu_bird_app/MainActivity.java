@@ -19,7 +19,6 @@
         private AdView mAdView;             //variable for googleads(test) check how to replace with own
         private boolean isMusicMuted = false; // Flag to keep track of music mute status
 
-
         private static final int REQUEST_CODE_TEST_OPTIONS = 1; // You can choose any integer value for this constant
 
         public void openOptions(){

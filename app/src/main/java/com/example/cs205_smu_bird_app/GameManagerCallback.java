@@ -3,6 +3,7 @@ package com.example.cs205_smu_bird_app;
 import android.graphics.Rect;
 
 import com.example.cs205_smu_bird_app.sprites.Obstacle;
+import com.example.cs205_smu_bird_app.sprites.Bomb;
 
 import java.util.ArrayList;
 
@@ -11,4 +12,6 @@ public interface GameManagerCallback {
     void updatePosition(Obstacle obstacle, ArrayList<Rect> positions);
     void removeObstacle(Obstacle obstacle);
 
+    void updateBombPosition(Bomb bomb, ArrayList<Rect> positions);
+    void removeBomb(Bomb bomb);
 }

@@ -19,7 +19,10 @@ import com.example.cs205_smu_bird_app.sprites.GameMessage;
 import com.example.cs205_smu_bird_app.sprites.GameOver;
 import com.example.cs205_smu_bird_app.sprites.Obstacle;
 import com.example.cs205_smu_bird_app.sprites.ObstacleManager;
+import com.example.cs205_smu_bird_app.sprites.BombManager;
+import com.example.cs205_smu_bird_app.sprites.Bomb;
 import com.example.cs205_smu_bird_app.sprites.Score;
+
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -38,15 +41,16 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
     private DisplayMetrics dm;
     private GameOver gameOver;
     private ObstacleManager obstacleManager;
+    private BombManager bombManager;
     private Rect birdPosition;
     private HashMap<Obstacle, List<Rect>> obstaclePositions = new HashMap<>();
-
+    private HashMap<Bomb, List<Rect>> bombPositions = new HashMap<>();
     private MediaPlayer mpPoint;
     private MediaPlayer mpSwoosh;
-    private MediaPlayer mpDie;
     private MediaPlayer mpHit;
     private MediaPlayer mpWing;
     private MediaPlayer mpDieTest;
+    private MediaPlayer mpDie;
 
     Vibrator vibrator = getContext().getSystemService(Vibrator.class);
 
@@ -64,22 +68,23 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         score = 0;
         birdPosition = new Rect();
         obstaclePositions = new HashMap<>();
+        bombPositions = new HashMap<>();
         //bird creation! by giving it resources to make a bird
         //now call the bird in draw method!
         bird = new Bird(getResources(), dm.heightPixels, this);
         background = new Background(getResources(), dm.heightPixels);
         obstacleManager = new ObstacleManager(getResources(), dm.heightPixels, dm.widthPixels, this);
+        bombManager = new BombManager(getResources(), dm.heightPixels, dm.widthPixels, this);
         gameOver = new GameOver(getResources(), dm.heightPixels, dm.widthPixels);
         gameMessage = new GameMessage(getResources(), dm.heightPixels, dm.widthPixels);
         scoreSprite = new Score(getResources(), dm.heightPixels, dm.widthPixels);
-
 
     }
 
     private void initSounds() {
         mpPoint = MediaPlayer.create(getContext(), R.raw.point);
         mpSwoosh = MediaPlayer.create(getContext(), R.raw.swoosh);
-        //mpDie = MediaPlayer.create(getContext(), R.raw.die);
+        mpDie = MediaPlayer.create(getContext(), R.raw.die);
         mpHit = MediaPlayer.create(getContext(), R.raw.hit);
         mpWing = MediaPlayer.create(getContext(), R.raw.wing);
         mpDieTest = MediaPlayer.create(getContext(), R.raw.dietest);
@@ -130,6 +135,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
                 //place bird sprite somewhere on screen
                 bird.update();
                 obstacleManager.update();
+                bombManager.update();
                 //System.out.println("GameManager update call");
                 break;
             case GAME_OVER:
@@ -148,6 +154,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
                 case PLAYING:
                     bird.draw(canvas); //bird calling
                     obstacleManager.draw(canvas);
+                    bombManager.draw(canvas);
                     scoreSprite.draw(canvas);
                     calculateCollision();       //occurs everytime new bird, new pos to ensure alw collision checked
                     break;
@@ -160,6 +167,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
                 case GAME_OVER:
                     bird.draw(canvas);
                     obstacleManager.draw(canvas);
+                    bombManager.draw(canvas);
                     gameOver.draw(canvas);
                     scoreSprite.draw(canvas);
                     break;
@@ -219,7 +227,22 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         score++;
         scoreSprite.updateScore(score);
         mpPoint.start();
+    }
 
+    @Override
+    public void updateBombPosition(Bomb bomb, ArrayList<Rect> positions) {
+        if (bombPositions.containsKey(bomb)) {
+            bombPositions.remove(bomb);
+        }
+        bombPositions.put(bomb,positions);
+    }
+
+    @Override
+    public void removeBomb(Bomb bomb) {
+        bombPositions.remove(bomb);
+        score++;
+        scoreSprite.updateScore(score);
+        mpDie.start();
     }
 
     //calculate collision occured or not
