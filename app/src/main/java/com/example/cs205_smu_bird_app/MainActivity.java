@@ -20,32 +20,19 @@
 
         private AdView mAdView;             //variable for googleads(test) check how to replace with own
         private boolean isMusicMuted = false; // Flag to keep track of music mute status
-        private static final int REQUEST_CODE_OPTIONS = 1; // Request code for options activity
-        private boolean wasMusicMuted;
-        private void startOptionsActivity() {
+
+
+        public void openOptions(){
             Intent intent = new Intent(this, testOptions.class);
-            intent.putExtra("isMusicMuted", isMusicMuted); // Pass the current state of isMusicMuted
-            startActivityForResult(intent, REQUEST_CODE_OPTIONS); // Start options activity with request code
+            intent.putExtra("isMusicMuted", isMusicMuted); // Pass the current value of isMusicMuted to child activity
+            startActivity(intent);  //start activity and wait for result
         }
-        //Handle result from Options
-        @Override
-        protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-            super.onActivityResult(requestCode, resultCode, data);
-            if (requestCode == REQUEST_CODE_OPTIONS && resultCode == RESULT_OK) {
-                // Check if the result is from options activity and it's RESULT_OK
-                if (data != null && data.hasExtra("isMusicMuted")) {
-                        boolean wasMusicMuted = data.getBooleanExtra("isMusicMuted", false);
+        public boolean getMusicResult(){
+            Intent intent = getIntent();
+            return intent.getBooleanExtra("isMusicMuted", isMusicMuted);
+        }
 
-                        if (wasMusicMuted == true) {
-                            isMusicMuted = true;
-                        }
-                        else if (wasMusicMuted == false){
-                            isMusicMuted = false;
-                        }
 
-                    }
-                }
-            }
         @Override       //load activity
         protected void onCreate(Bundle savedInstanceState) {
             super.onCreate(savedInstanceState);
@@ -60,6 +47,7 @@
                 }
             });
 
+
             Thread audioThread = new Thread(new Runnable() {
                 @Override
                 public void run() {
@@ -67,7 +55,9 @@
                     mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.bgm);
                     mediaPlayer.setLooping(true); // Set audio to loop
 
-                    if (isMusicMuted == true) {
+                    boolean musicResult= getMusicResult();
+
+                    if (musicResult == true) {
                         mediaPlayer.pause();
                     }
                     else {
@@ -77,19 +67,13 @@
                 }
             });
             audioThread.run(); // Start the audio thread
-
-
             MobileAds.initialize(this, "ca-app-pub-9057526686789846~7828440247");
             mAdView = findViewById(R.id.adView);
             AdRequest adRequest = new AdRequest.Builder().build();
             mAdView.loadAd(adRequest);
 
         }
-        public void openOptions(){
-            Intent intent = new Intent(this, testOptions.class);
-            intent.putExtra("isMusicMuted", isMusicMuted); // Pass the current value of isMusicMuted to child activity
-            startActivityForResult(intent, 1);  //start activity and wait for result
-        }
+
         @Override
         public void onDestroy() {
             super.onDestroy();
