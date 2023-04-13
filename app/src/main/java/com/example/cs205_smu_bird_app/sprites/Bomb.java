@@ -20,6 +20,8 @@ public class Bomb implements sprite{
     private Bitmap image;
     private BombCallback callback;
 
+    private int yPosition;
+
 
     public Bomb(Resources resources, int screenHeight, int screenWidth, BombCallback callback){
         image = BitmapFactory.decodeResource(resources, R.drawable.bomb_character_o_idle);
@@ -35,18 +37,23 @@ public class Bomb implements sprite{
         headExtraWidth = (int) resources.getDimension(R.dimen.head_extra_width); //height changes as game progress
         obstacleMinPosition = (int) resources.getDimension(R.dimen.obstacle_min_position);
 
+        yPosition = 0;
+        height = image.getHeight();
         //create randomness to bomb
         Random random = new Random(System.currentTimeMillis());
-        height = random.nextInt(screenHeight - 1 * obstacleMinPosition - separation) + obstacleMinPosition;
-
+        int minYPosition = obstacleMinPosition;
+        int maxYPosition = screenHeight - obstacleMinPosition - height;
+        if (maxYPosition > minYPosition) {
+            yPosition = random.nextInt(maxYPosition - minYPosition) + minYPosition;
+        } else {
+            yPosition = minYPosition;
+        }
     }
 
 
     @Override
     public void draw(Canvas canvas) {
-        int bombTop = height;
-
-        Rect bomb = new Rect(xPosition + headExtraWidth, bombTop, xPosition + width + headExtraWidth, screenHeight);
+        Rect bomb = new Rect(xPosition, yPosition, xPosition + width, yPosition + height);
 
         Paint paint = new Paint();
         canvas.drawBitmap(image, null, bomb, paint);
