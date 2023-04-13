@@ -1,95 +1,94 @@
-    package com.example.cs205_smu_bird_app;
+package com.example.cs205_smu_bird_app;
 
-    import android.app.Activity;
-    import android.content.Intent;
-    import android.os.Bundle;
-    import android.view.View;
-    import android.view.Window;
+import android.app.Activity;
+import android.content.Intent;
+import android.os.Bundle;
+import android.view.View;
+import android.view.Window;
+import com.google.android.gms.ads.AdRequest;
+import com.google.android.gms.ads.AdView;
+import com.google.android.gms.ads.MobileAds;
+import android.media.MediaPlayer;
+import android.widget.Button;
 
-    import com.google.android.gms.ads.AdRequest;
-    import com.google.android.gms.ads.AdView;
-    import com.google.android.gms.ads.MobileAds;
-    import android.media.MediaPlayer;
-    import android.widget.Button;
+public class MainActivity extends Activity {
+    private MediaPlayer mediaPlayer;
+    private Button button;
 
-    public class MainActivity extends Activity {
-        private MediaPlayer mediaPlayer;
-        private Button button;
+    private AdView mAdView;
+    private boolean isMusicMuted = false;
 
-        private AdView mAdView;
-        private boolean isMusicMuted = false;
+    private static final int REQUEST_CODE_TEST_OPTIONS = 1;
 
-        private static final int REQUEST_CODE_TEST_OPTIONS = 1;
+    public void openOptions() {
+        Intent intent = new Intent(this, testOptions.class);
+        intent.putExtra("isMusicMuted", isMusicMuted);
+        startActivityForResult(intent, REQUEST_CODE_TEST_OPTIONS);
+    }
 
-        public void openOptions() {
-            Intent intent = new Intent(this, testOptions.class);
-            intent.putExtra("isMusicMuted", isMusicMuted); // Pass the isMusicMuted value to testOptions activity
-            startActivityForResult(intent, REQUEST_CODE_TEST_OPTIONS);
-        }
-
-        public void onActivityResult(int requestCode, int resultCode, Intent data) {
-            super.onActivityResult(requestCode, resultCode, data);
-            if (requestCode == REQUEST_CODE_TEST_OPTIONS && resultCode == RESULT_OK) {
-                isMusicMuted = data.getBooleanExtra("isMusicMuted", isMusicMuted);
-                updateAudioPlayback(); // Call updateAudioPlayback() after updating isMusicMuted
-            }
-        }
-
-        @Override
-        protected void onCreate(Bundle savedInstanceState) {
-            super.onCreate(savedInstanceState);
-            requestWindowFeature(Window.FEATURE_NO_TITLE);
-            setContentView(R.layout.activity_main);
-
-            button = (Button) findViewById(R.id.buttonOptions);
-            button.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    openOptions();
-                }
-            });
-
-            // Initialize media player
-            mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.bgm);
-            mediaPlayer.setLooping(true); // Set audio to loop
-
-            MobileAds.initialize(this, "ca-app-pub-9057526686789846~7828440247");
-            mAdView = findViewById(R.id.adView);
-            AdRequest adRequest = new AdRequest.Builder().build();
-            mAdView.loadAd(adRequest);
-        }
-
-        @Override
-        public void onDestroy() {
-            super.onDestroy();
-            if (mediaPlayer != null) {
-                mediaPlayer.stop();
-                mediaPlayer.release();
-                mediaPlayer = null;
-            }
-        }
-
-        @Override
-        public void onPause() {
-            super.onPause();
-            if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-                mediaPlayer.pause(); // Pause audio playback
-            }
-        }
-
-        @Override
-        protected void onResume() {
-            super.onResume();
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_CODE_TEST_OPTIONS && resultCode == RESULT_OK) {
+            isMusicMuted = data.getBooleanExtra("isMusicMuted", isMusicMuted);
             updateAudioPlayback();
         }
+    }
 
-        private void updateAudioPlayback() {
-            if (mediaPlayer != null) {
-                if (isMusicMuted) {
-                    mediaPlayer.pause();
-                } else {
-                    mediaPlayer.start();
-                }
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        setContentView(R.layout.activity_main);
+
+        button = (Button) findViewById(R.id.buttonOptions);
+        button.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openOptions();
+            }
+        });
+
+        mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.bgm);
+        mediaPlayer.setLooping(true);
+        updateAudioPlayback();
+
+        MobileAds.initialize(this, "ca-app-pub-9057526686789846~7828440247");
+        mAdView = findViewById(R.id.adView);
+        AdRequest adRequest = new AdRequest.Builder().build();
+        mAdView.loadAd(adRequest);
+    }
+
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        if (mediaPlayer != null) {
+            mediaPlayer.stop();
+            mediaPlayer.release();
+            mediaPlayer = null;
+        }
+    }
+
+    @Override
+    public void onPause() {
+        super.onPause();
+        if (!isMusicMuted && mediaPlayer != null && mediaPlayer.isPlaying()) {
+            mediaPlayer.pause();
+        }
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        updateAudioPlayback();
+    }
+
+    private void updateAudioPlayback() {
+        if (mediaPlayer != null) {
+            if (isMusicMuted) {
+                mediaPlayer.pause();
+            } else {
+                mediaPlayer.start();
             }
         }
     }
+}

@@ -3,19 +3,34 @@ package com.example.cs205_smu_bird_app;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
+import android.media.AudioManager;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.media.MediaPlayer;
-import java.util.concurrent.locks.ReentrantLock;
+import android.widget.SeekBar;
 
 public class testOptions extends AppCompatActivity {
     private Button muteMusic;
     private Button back2Game;
-    private MediaPlayer mediaPlayer;
+    private SeekBar volumeSeekBar;
+    private AudioManager audioManager;
     private boolean isMusicMuted;
 
+    private Runnable muteRunnable = new Runnable() {
+        @Override
+        public void run() {
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, 0, 0);
+        }
+    };
+
+    private Runnable unmuteRunnable = new Runnable() {
+        @Override
+        public void run() {
+            int currentVolume = volumeSeekBar.getProgress();
+            audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, currentVolume, 0);
+        }
+    };
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +38,6 @@ public class testOptions extends AppCompatActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_testoptions);
 
-        // Get the initial value of isMusicMuted from the intent
         Intent intent = getIntent();
         isMusicMuted = intent.getBooleanExtra("isMusicMuted", false);
 
@@ -33,6 +47,11 @@ public class testOptions extends AppCompatActivity {
             @Override
             public void onClick(View view) {
                 isMusicMuted = !isMusicMuted;
+                if (isMusicMuted) {
+                    new Thread(muteRunnable).start();
+                } else {
+                    new Thread(unmuteRunnable).start();
+                }
                 updateButtonText();
             }
         });
@@ -44,6 +63,28 @@ public class testOptions extends AppCompatActivity {
                 onBackPressed2();
             }
         });
+
+        audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
+
+        volumeSeekBar = (SeekBar) findViewById(R.id.volume_seekbar);
+        int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
+        int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);
+        volumeSeekBar.setMax(maxVolume);
+        volumeSeekBar.setProgress(currentVolume);
+        volumeSeekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+                if (!isMusicMuted) {
+                    audioManager.setStreamVolume(AudioManager.STREAM_MUSIC, progress, 0);
+                }
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {}
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {}
+        });
     }
 
     private void updateButtonText() {
@@ -54,29 +95,10 @@ public class testOptions extends AppCompatActivity {
         }
     }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        if (mediaPlayer != null && mediaPlayer.isPlaying()) {
-            mediaPlayer.pause();
-        }
-    }
-
-    @Override
-    protected void onDestroy() {
-        super.onDestroy();
-        if (mediaPlayer != null) {
-            mediaPlayer.release();
-            mediaPlayer = null;
-        }
-    }
-
-
     public void onBackPressed2() {
         Intent intent = new Intent();
         intent.putExtra("isMusicMuted", isMusicMuted);
         setResult(RESULT_OK, intent);
         super.onBackPressed();
-
     }
 }

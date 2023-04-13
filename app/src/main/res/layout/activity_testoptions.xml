@@ -11,7 +11,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:text="Back to game"
-        android:layout_marginTop="66dp"
+        android:layout_below="@id/volume_seekbar"
         android:layout_marginStart="16dp" />
 
     <Button
@@ -21,5 +21,12 @@
         android:text="Mute Music"
         android:layout_marginTop="16dp"
         android:layout_marginStart="16dp" />
+
+    <SeekBar
+        android:id="@+id/volume_seekbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mute_button"
+        android:layout_marginTop="16dp" />
 
 </RelativeLayout>
