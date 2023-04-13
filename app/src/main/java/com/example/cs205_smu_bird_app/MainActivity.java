@@ -10,6 +10,7 @@ import com.google.android.gms.ads.AdView;
 import com.google.android.gms.ads.MobileAds;
 import android.media.MediaPlayer;
 import android.widget.Button;
+import android.view.WindowManager;
 
 public class MainActivity extends Activity {
     private MediaPlayer mediaPlayer;
@@ -37,6 +38,7 @@ public class MainActivity extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON); //Screen always on with this line
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
