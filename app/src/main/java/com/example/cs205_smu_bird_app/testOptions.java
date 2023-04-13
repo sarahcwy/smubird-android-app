@@ -19,22 +19,21 @@ public class testOptions extends AppCompatActivity {
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_testoptions);
 
-        isMusicMuted = false;      //grab val from parent (yes i tried piping, didnt work)
+        // Get the initial value of isMusicMuted from the intent
+        Intent intent = getIntent();
+        isMusicMuted = intent.getBooleanExtra("isMusicMuted", false);
+
         muteMusic = (Button) findViewById(R.id.mute_button);
-        updateButtonText();     //update value based on initial
+        updateButtonText();
         muteMusic.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-
-                isMusicMuted = !isMusicMuted; // Toggle the value of isMusicMuted
-
+                isMusicMuted = !isMusicMuted;
                 updateButtonText();
-
             }
         });
 
@@ -45,9 +44,8 @@ public class testOptions extends AppCompatActivity {
                 onBackPressed2();
             }
         });
-
-
     }
+
     private void updateButtonText() {
         if (isMusicMuted) {
             muteMusic.setText("Unmute Music");

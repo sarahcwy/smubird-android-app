@@ -72,7 +72,8 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         //bird creation! by giving it resources to make a bird
         //now call the bird in draw method!
         bird = new Bird(getResources(), dm.heightPixels, this);
-        background = new Background(getResources(), dm.heightPixels);
+        //background = new Background(getResources(), dm.heightPixels);
+        background = new Background(getResources(), dm.heightPixels, dm.widthPixels, 5.0f);
         obstacleManager = new ObstacleManager(getResources(), dm.heightPixels, dm.widthPixels, this);
         bombManager = new BombManager(getResources(), dm.heightPixels, dm.widthPixels, this);
         gameOver = new GameOver(getResources(), dm.heightPixels, dm.widthPixels);
@@ -132,6 +133,8 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
     public void update() {
         switch(gameState) {
             case PLAYING:
+                // Update the background
+                background.update();
                 //place bird sprite somewhere on screen
                 bird.update();
                 obstacleManager.update();
