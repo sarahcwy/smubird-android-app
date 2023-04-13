@@ -37,47 +37,29 @@ public class Bomb implements sprite{
 
         //create randomness to bomb
         Random random = new Random(System.currentTimeMillis());
-        height = random.nextInt(screenHeight - 2 * obstacleMinPosition - separation) + obstacleMinPosition;
+        height = random.nextInt(screenHeight - 1 * obstacleMinPosition - separation) + obstacleMinPosition;
 
     }
 
 
     @Override
     public void draw(Canvas canvas) {
-        // Generate random values for vertical placement
-        int topHeadTop = (int) (Math.random() * (screenHeight - height - separation - 2 * headHeight + 1));
-        int topHeadBottom = topHeadTop + headHeight;
-        int bottomHeadTop = topHeadBottom + separation;
-        int bottomHeadBottom = bottomHeadTop + headHeight;
+        int bombTop = height;
 
-        // Update Rect objects with random values
-        Rect bottomPipe = new Rect(xPosition + headExtraWidth, screenHeight - height, xPosition + width + headExtraWidth, screenHeight);
-        Rect bottomHead = new Rect(xPosition, bottomHeadTop, xPosition + width + 2 * headExtraWidth, bottomHeadBottom);
-        Rect topPipe = new Rect(xPosition + headExtraWidth, 0, xPosition + headExtraWidth + width, topHeadTop);
-        Rect topHead = new Rect(xPosition, topHeadTop, xPosition + width + 2 * headExtraWidth, topHeadBottom);
+        Rect bomb = new Rect(xPosition + headExtraWidth, bombTop, xPosition + width + headExtraWidth, screenHeight);
 
-        xPosition = (int) (Math.random() * (screenWidth + 1)); // Initialize xPosition with random value
-        //fill rectangle so need paint them
         Paint paint = new Paint();
-        canvas.drawBitmap(image, null, bottomPipe, paint);
-        canvas.drawBitmap(image, null, bottomHead, paint);
-        canvas.drawBitmap(image, null, topPipe, paint);
-        canvas.drawBitmap(image, null, topHead, paint);
+        canvas.drawBitmap(image, null, bomb, paint);
     }
 
-    @Override
     public void update() {
-
-        xPosition -= speed; //move obstacles across the screen
-        if (xPosition <= 0 - width - 2*headExtraWidth) {
+        xPosition -= speed; // Move obstacles across the screen
+        if (xPosition <= 0 - width - 2 * headExtraWidth) {
             callback.bombOffScreen(this);
         } else {
             ArrayList<Rect> positions = new ArrayList<>();
-            Rect bottomPosition = new Rect(xPosition, screenHeight - height - headHeight, xPosition + width + 2*headExtraWidth, screenHeight);
-            Rect topPosition = new Rect(xPosition, 0, xPosition + width + 2*headExtraWidth, screenHeight - height - headHeight - separation);
-
-            positions.add(bottomPosition);
-            positions.add(topPosition);
+            Rect bombPosition = new Rect(xPosition, height, xPosition + width + 2 * headExtraWidth, screenHeight);
+            positions.add(bombPosition);
             callback.updatePosition(this, positions);
         }
     }

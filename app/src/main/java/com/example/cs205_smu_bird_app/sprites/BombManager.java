@@ -9,6 +9,8 @@ import com.example.cs205_smu_bird_app.R;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.Random;
+
 public class BombManager implements BombCallback{
     private int interval; //interval between 2 obs
     private ArrayList<Bomb> bombs = new ArrayList<>();
@@ -20,6 +22,8 @@ public class BombManager implements BombCallback{
     private int speed; //speed of obstacle
     private GameManagerCallback callback;
 
+    private static final int MAX_BOMBS_ON_SCREEN = 3;
+
     public BombManager(Resources resources, int screenHeight, int screenWidth, GameManagerCallback callback) {
         this.resources = resources;
         this.screenHeight = screenHeight;
@@ -28,18 +32,25 @@ public class BombManager implements BombCallback{
         interval = (int) resources.getDimension(R.dimen.obstacle_interval);
         speed = (int) resources.getDimension(R.dimen.obstacle_speed);
         bombs.add(new Bomb(resources,screenHeight,screenWidth, this));
+        interval = 400; // Distance between bombs
 
     }
 
     public void update() {
-        progress += speed;
-        if (progress > interval) {
-            progress = 0;
-            bombs.add(new Bomb(resources,screenHeight,screenWidth,this));
+        if (bombs.size() < MAX_BOMBS_ON_SCREEN) {
+            progress += speed;
+            if (progress > interval) {
+                progress = 0;
+                // Randomly decide if a new bomb should be created
+                Random random = new Random();
+                if (random.nextInt(4) > 0) { // 75% chance of creating a new bomb
+                    bombs.add(new Bomb(resources, screenHeight, screenWidth, this));
+                }
+            }
         }
         List<Bomb> duplicate = new ArrayList<>();
         duplicate.addAll(bombs);
-        for (Bomb bomb: duplicate) {
+        for (Bomb bomb : duplicate) {
             bomb.update();
         }
     }
