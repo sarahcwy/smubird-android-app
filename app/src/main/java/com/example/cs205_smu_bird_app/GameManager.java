@@ -79,10 +79,12 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
             if (score < 0) {
                 score = 0;
             }
-        } finally {
+        }
+        finally {
+            scoreSprite.updateScore(score);
             scoreMutex.unlock();
         }
-        scoreSprite.updateScore(score);
+
     }
 
 
@@ -274,7 +276,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         obstaclePositions.remove(obstacle);
         scoreMutex.lock();
         try {
-            score++;
+            score+= 100;
         } finally {
             scoreMutex.unlock();
         }
@@ -285,15 +287,10 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
     @Override
     public void removeBomb(Bomb bomb) {
         bombPositions.remove(bomb);
-//        scoreMutex.lock();
-//        try {
-//            score = Math.max(0, score - 1); // Ensure the score does not go below 0
-//        } finally {
-//            scoreMutex.unlock();
-//        }
-        scoreSprite.updateScore(score);
-        mpDie.start();
-        invincibilityTime = System.currentTimeMillis() + 1000; // Make the bird invincible for 2 seconds
+        //scoreSprite.updateScore(score);
+
+        //mpDie.start();
+        //invincibilityTime = System.currentTimeMillis() + 1000; // Make the bird invincible for 2 seconds
     }
 
     @Override
@@ -304,13 +301,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         bombPositions.put(bomb,positions);
     }
 
-//    @Override
-//    public void removeBomb(Bomb bomb) {
-//        bombPositions.remove(bomb);
-//        score++;
-//        scoreSprite.updateScore(score);
-//        mpDie.start();
-//    }
+
 
     //calculate collision occured or not
     public void calculateCollision() {
@@ -318,6 +309,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
             return;
         }
         boolean collision = false;
+
         if (birdPosition.bottom > dm.heightPixels) {
             collision = true;
         } else {
@@ -335,15 +327,26 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
             for (Bomb bomb : bombPositions.keySet()) {
                 Rect bombRectangle = bombPositions.get(bomb).get(0);
                 if (birdPosition.intersect(bombRectangle)) {
-                    removeBomb(bomb); // Remove bomb
-                    updateScore(-1);  // Subtract 1 point from the score
+                    //removeBomb(bomb); // Remove bomb
+                    updateScore(-5);  // Subtract 5 point from the score
                     mpDie.start();    // Play the sound
-                    collision = true; // Set collision to true since the bird collided with a bomb
+                    //bombCollision = true; // Set collision to true since the bird collided with a bomb
 
                     bombManager.removeBomb(bomb); // Add this line to remove the bomb after a collision
                 }
             }
         }
+//        if (bombCollision) {
+//            //bird.collision();
+//            scoreSprite.collision(getContext().getSharedPreferences(APP_NAME, Context.MODE_PRIVATE)); // let SS know collision
+//            mpHit.start(); // play hit!
+//            mpHit.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
+//                @Override
+//                public void onCompletion(MediaPlayer mp) {
+//                    mpDieTest.start();
+//                }
+//            });
+//        }
 
         if (collision) {
             // Implement Game Over Here!
