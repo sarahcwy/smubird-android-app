@@ -55,6 +55,8 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
     private MediaPlayer mpDieTest;
     private MediaPlayer mpDie;
 
+    private long invincibilityTime = 0;
+
     private Lock scoreMutex = new ReentrantLock();
 
     Vibrator vibrator = getContext().getSystemService(Vibrator.class);
@@ -283,14 +285,15 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
     @Override
     public void removeBomb(Bomb bomb) {
         bombPositions.remove(bomb);
-        scoreMutex.lock();
-        try {
-            score = Math.max(0, score - 1); // Ensure the score does not go below 0
-        } finally {
-            scoreMutex.unlock();
-        }
+//        scoreMutex.lock();
+//        try {
+//            score = Math.max(0, score - 1); // Ensure the score does not go below 0
+//        } finally {
+//            scoreMutex.unlock();
+//        }
         scoreSprite.updateScore(score);
         mpDie.start();
+        invincibilityTime = System.currentTimeMillis() + 1000; // Make the bird invincible for 2 seconds
     }
 
     @Override
@@ -311,6 +314,9 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
 
     //calculate collision occured or not
     public void calculateCollision() {
+        if (System.currentTimeMillis() < invincibilityTime) {
+            return;
+        }
         boolean collision = false;
         if (birdPosition.bottom > dm.heightPixels) {
             collision = true;
@@ -332,21 +338,12 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
                     removeBomb(bomb); // Remove bomb
                     updateScore(-1);  // Subtract 1 point from the score
                     mpDie.start();    // Play the sound
+                    collision = true; // Set collision to true since the bird collided with a bomb
+
+                    bombManager.removeBomb(bomb); // Add this line to remove the bomb after a collision
                 }
             }
         }
-
-        if (!collision) {
-            for (Bomb bomb : bombPositions.keySet()) {
-                Rect bombRectangle = bombPositions.get(bomb).get(0);
-                if (birdPosition.intersect(bombRectangle)) {
-                    removeBomb(bomb); // Remove bomb
-                    updateScore(-1);  // Subtract 1 point from the score using the updated method
-                    mpDie.start();    // Play the sound
-                }
-            }
-        }
-
 
         if (collision) {
             // Implement Game Over Here!
@@ -362,5 +359,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
             });
         }
     }
+
+
 
 }

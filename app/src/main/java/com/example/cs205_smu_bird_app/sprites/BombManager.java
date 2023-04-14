@@ -34,6 +34,13 @@ public class BombManager implements BombCallback{
         bombs.add(new Bomb(resources,screenHeight,screenWidth, this));
         interval = 400; // Distance between bombs
 
+
+    }
+
+    public void removeBomb(Bomb bomb) {
+        // Implement the logic for removing the bomb from the list or array of bombs
+        // For example, if you have an ArrayList of bombs:
+        bombs.remove(bomb);
     }
 
     public void update() {
