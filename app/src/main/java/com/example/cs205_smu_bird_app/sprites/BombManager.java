@@ -71,6 +71,14 @@ public class BombManager implements BombCallback{
 
     @Override
     public void updatePosition(Bomb bomb, ArrayList<Rect> positions) {
+        int xPosition = bomb.getX();
+        int yPosition = bomb.getY();
+        int width = bomb.getWidth();
+        int height = bomb.getHeight();
+        Rect bombPosition = new Rect(xPosition, yPosition, xPosition + width, yPosition + height);
+        positions.add(bombPosition);
         callback.updateBombPosition(bomb, positions);
     }
+
+
 }

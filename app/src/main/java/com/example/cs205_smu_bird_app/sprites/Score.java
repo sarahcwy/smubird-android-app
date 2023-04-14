@@ -119,4 +119,11 @@ public class Score implements sprite{
 
         }
     }
+    public void decreaseScore(int decrement) {
+        this.score -= decrement;
+        if (this.score < 0) {
+            this.score = 0;
+        }
+    }
+
 }

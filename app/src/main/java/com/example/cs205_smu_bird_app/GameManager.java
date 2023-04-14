@@ -1,5 +1,8 @@
 package com.example.cs205_smu_bird_app;
 
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
+
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -52,6 +55,8 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
     private MediaPlayer mpDieTest;
     private MediaPlayer mpDie;
 
+    private Lock scoreMutex = new ReentrantLock();
+
     Vibrator vibrator = getContext().getSystemService(Vibrator.class);
 
     public GameManager(Context context, AttributeSet attributeSet) {
@@ -63,6 +68,21 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         ((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(dm);
         initGame();
     }
+
+    // New synchronized method for updating the score
+    private void updateScore(int value) {
+        scoreMutex.lock();
+        try {
+            score += value;
+            if (score < 0) {
+                score = 0;
+            }
+        } finally {
+            scoreMutex.unlock();
+        }
+        scoreSprite.updateScore(score);
+    }
+
 
     private void initGame() {
         score = 0;
@@ -152,14 +172,14 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         super.draw(canvas);
         if (canvas != null) {
             canvas.drawRGB(150, 255, 255);
-            background.draw(canvas); //put this first so that bird is IN FRONT
+            background.draw(canvas);
             switch(gameState) {
                 case PLAYING:
-                    bird.draw(canvas); //bird calling
+                    bird.draw(canvas);
                     obstacleManager.draw(canvas);
                     bombManager.draw(canvas);
-                    scoreSprite.draw(canvas);
-                    calculateCollision();       //occurs everytime new bird, new pos to ensure alw collision checked
+                    calculateCollision();
+                    scoreSprite.draw(canvas); // Move scoreSprite.draw(canvas) here
                     break;
 
                 case INITIAL:
@@ -172,12 +192,27 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
                     obstacleManager.draw(canvas);
                     bombManager.draw(canvas);
                     gameOver.draw(canvas);
-                    scoreSprite.draw(canvas);
                     break;
             }
 
         }
     }
+
+
+
+
+
+
+    @Override
+    public void updatePosition(Obstacle obstacle, ArrayList<Rect> positions) {
+        // Update each obstacle every time
+        // Likely each obstacle is already in the map
+        if (obstaclePositions.containsKey(obstacle)) {
+            obstaclePositions.remove(obstacle);
+        }
+        obstaclePositions.put(obstacle, positions);
+    }
+
 
     //On press
     @Override
@@ -214,22 +249,48 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         this.birdPosition = birdPosition;
     }
 
-    @Override
-    public void updatePosition(Obstacle obstacle, ArrayList<Rect> positions) {
-        //update each obstacle everytime
-        //likely each obstacle is alr in map
-        if (obstaclePositions.containsKey(obstacle)) {
-            obstaclePositions.remove(obstacle);
-        }
-        obstaclePositions.put(obstacle,positions);
-    }
+//    @Override
+//    public void updatePosition(Obstacle obstacle, ArrayList<Rect> positions) {
+//        //update each obstacle everytime
+//        //likely each obstacle is alr in map
+//        if (obstaclePositions.containsKey(obstacle)) {
+//            obstaclePositions.remove(obstacle);
+//        }
+//        obstaclePositions.put(obstacle,positions);
+//    }
+//
+//    @Override
+//    public void removeObstacle(Obstacle obstacle) {
+//        obstaclePositions.remove(obstacle);
+//        score++;
+//        scoreSprite.updateScore(score);
+//        mpPoint.start();
+//    }
 
     @Override
     public void removeObstacle(Obstacle obstacle) {
         obstaclePositions.remove(obstacle);
-        score++;
+        scoreMutex.lock();
+        try {
+            score++;
+        } finally {
+            scoreMutex.unlock();
+        }
         scoreSprite.updateScore(score);
         mpPoint.start();
+    }
+
+    @Override
+    public void removeBomb(Bomb bomb) {
+        bombPositions.remove(bomb);
+        scoreMutex.lock();
+        try {
+            score = Math.max(0, score - 1); // Ensure the score does not go below 0
+        } finally {
+            scoreMutex.unlock();
+        }
+        scoreSprite.updateScore(score);
+        mpDie.start();
     }
 
     @Override
@@ -240,13 +301,13 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         bombPositions.put(bomb,positions);
     }
 
-    @Override
-    public void removeBomb(Bomb bomb) {
-        bombPositions.remove(bomb);
-        score++;
-        scoreSprite.updateScore(score);
-        mpDie.start();
-    }
+//    @Override
+//    public void removeBomb(Bomb bomb) {
+//        bombPositions.remove(bomb);
+//        score++;
+//        scoreSprite.updateScore(score);
+//        mpDie.start();
+//    }
 
     //calculate collision occured or not
     public void calculateCollision() {
@@ -254,23 +315,45 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         if (birdPosition.bottom > dm.heightPixels) {
             collision = true;
         } else {
-            for (Obstacle obstacle: obstaclePositions.keySet()) {
+            for (Obstacle obstacle : obstaclePositions.keySet()) {
                 Rect bottomRectangle = obstaclePositions.get(obstacle).get(0);
                 Rect topRectangle = obstaclePositions.get(obstacle).get(1);
-                if (birdPosition.right > bottomRectangle.left && birdPosition.left < bottomRectangle.right && birdPosition.bottom > bottomRectangle.top){
+                if (birdPosition.right > bottomRectangle.left && birdPosition.left < bottomRectangle.right && birdPosition.bottom > bottomRectangle.top) {
                     collision = true;
                 } else if (birdPosition.right > topRectangle.left && birdPosition.left < topRectangle.right && birdPosition.top < topRectangle.bottom) {
                     collision = true;
                 }
-                //collision checked
+            }
+
+            // Check for collision with bombs
+            for (Bomb bomb : bombPositions.keySet()) {
+                Rect bombRectangle = bombPositions.get(bomb).get(0);
+                if (birdPosition.intersect(bombRectangle)) {
+                    removeBomb(bomb); // Remove bomb
+                    updateScore(-1);  // Subtract 1 point from the score
+                    mpDie.start();    // Play the sound
+                }
             }
         }
+
+        if (!collision) {
+            for (Bomb bomb : bombPositions.keySet()) {
+                Rect bombRectangle = bombPositions.get(bomb).get(0);
+                if (birdPosition.intersect(bombRectangle)) {
+                    removeBomb(bomb); // Remove bomb
+                    updateScore(-1);  // Subtract 1 point from the score using the updated method
+                    mpDie.start();    // Play the sound
+                }
+            }
+        }
+
+
         if (collision) {
-            //implement Game Over Here!
+            // Implement Game Over Here!
             gameState = GameState.GAME_OVER;
             bird.collision();
-            scoreSprite.collision(getContext().getSharedPreferences(APP_NAME, Context.MODE_PRIVATE));            //let SS know collision
-            mpHit.start(); //play hit!
+            scoreSprite.collision(getContext().getSharedPreferences(APP_NAME, Context.MODE_PRIVATE)); // let SS know collision
+            mpHit.start(); // play hit!
             mpHit.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {

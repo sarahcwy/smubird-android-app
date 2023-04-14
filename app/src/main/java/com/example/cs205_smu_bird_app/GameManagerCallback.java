@@ -14,4 +14,6 @@ public interface GameManagerCallback {
 
     void updateBombPosition(Bomb bomb, ArrayList<Rect> positions);
     void removeBomb(Bomb bomb);
+
+
 }

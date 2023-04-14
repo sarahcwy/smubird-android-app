@@ -22,6 +22,22 @@ public class Bomb implements sprite{
 
     private int yPosition;
 
+    public int getX() {
+        return xPosition;
+    }
+
+    public int getY() {
+        return yPosition;
+    }
+
+    public int getWidth() {
+        return width;
+    }
+
+    public int getHeight() {
+        return height;
+    }
+
 
     public Bomb(Resources resources, int screenHeight, int screenWidth, BombCallback callback){
         image = BitmapFactory.decodeResource(resources, R.drawable.bomb_character_o_idle);
@@ -54,7 +70,6 @@ public class Bomb implements sprite{
     @Override
     public void draw(Canvas canvas) {
         Rect bomb = new Rect(xPosition, yPosition, xPosition + width, yPosition + height);
-
         Paint paint = new Paint();
         canvas.drawBitmap(image, null, bomb, paint);
     }
@@ -65,9 +80,14 @@ public class Bomb implements sprite{
             callback.bombOffScreen(this);
         } else {
             ArrayList<Rect> positions = new ArrayList<>();
-            Rect bombPosition = new Rect(xPosition, height, xPosition + width + 2 * headExtraWidth, screenHeight);
+            int smallerWidth = (int) (width * 0.05);
+            int smallerHeight = (int) (height * 0.05);
+            int xOffset = (width - smallerWidth) / 20;
+            int yOffset = (height - smallerHeight) / 20;
+            Rect bombPosition = new Rect(xPosition + xOffset, yPosition + yOffset, xPosition + width - xOffset, yPosition + height - yOffset);
             positions.add(bombPosition);
             callback.updatePosition(this, positions);
         }
     }
+
 }
