@@ -186,8 +186,8 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
                     bird.draw(canvas);
                     obstacleManager.draw(canvas);
                     bombManager.draw(canvas);
-                    calculateCollision();
                     scoreSprite.draw(canvas); // Move scoreSprite.draw(canvas) here
+                    calculateCollision();
                     break;
 
                 case INITIAL:
@@ -200,6 +200,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
                     obstacleManager.draw(canvas);
                     bombManager.draw(canvas);
                     gameOver.draw(canvas);
+                    scoreSprite.draw(canvas);
                     break;
             }
 
