@@ -28,7 +28,7 @@ public class scoreCounter {
             while (!Thread.currentThread().isInterrupted()) {
                 synchronized (mutex) { // Acquire lock on mutex
                     if (decrementFlag) {
-                        score -= 5; // Decrement the score
+                        score -= 10; // Decrement the score
                         decrementFlag = false; // Reset decrement flag
                     }
                 } // Release lock on mutex

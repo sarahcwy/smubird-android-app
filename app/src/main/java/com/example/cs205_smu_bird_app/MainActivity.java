@@ -57,7 +57,7 @@ public class MainActivity extends Activity {
             }
         });
 
-        mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.bgm);
+        mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.bgm2);
         mediaPlayer.setLooping(true);
         updateAudioPlayback();
 

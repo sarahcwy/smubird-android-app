@@ -30,7 +30,6 @@ public class MainThread extends Thread{
 
         //put scoreThread here
 
-
         while (running) {
             startTime = System.nanoTime();
             canvas = null;
