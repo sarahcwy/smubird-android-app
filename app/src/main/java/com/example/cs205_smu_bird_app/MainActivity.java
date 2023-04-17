@@ -2,6 +2,9 @@ package com.example.cs205_smu_bird_app;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.BitmapDrawable;
 import android.os.Bundle;
 import android.view.View;
 import android.view.Window;
@@ -14,7 +17,7 @@ import android.view.WindowManager;
 
 public class MainActivity extends Activity {
     private MediaPlayer mediaPlayer;
-    private Button button;
+    private Button buttonOptions;
 
     private AdView mAdView;
     private boolean isMusicMuted = false;
@@ -42,8 +45,12 @@ public class MainActivity extends Activity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         setContentView(R.layout.activity_main);
 
-        button = (Button) findViewById(R.id.buttonOptions);
-        button.setOnClickListener(new View.OnClickListener() {
+        buttonOptions = (Button) findViewById(R.id.buttonOptions);
+
+        Bitmap bitmap = BitmapFactory.decodeResource(getResources(), R.drawable.settings);
+        BitmapDrawable drawable = new BitmapDrawable(getResources(), bitmap);
+        buttonOptions.setBackground(drawable);
+        buttonOptions.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 openOptions();
