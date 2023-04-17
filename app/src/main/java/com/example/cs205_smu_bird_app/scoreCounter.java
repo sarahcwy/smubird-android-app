@@ -62,10 +62,6 @@ public class scoreCounter {
         decrementThread.interrupt();
         isIncrementThreadRunning = false; // Reset increment thread running flag
         isDecrementThreadRunning = false; // Reset decrement thread running flag
-        //In stopThread
-//        if (score > 0) {
-//            score = 0;
-//        }
     }
 
     // Method to manually increment the score
