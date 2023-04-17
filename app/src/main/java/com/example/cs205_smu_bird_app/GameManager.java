@@ -24,6 +24,8 @@ import com.example.cs205_smu_bird_app.sprites.Obstacle;
 import com.example.cs205_smu_bird_app.sprites.ObstacleManager;
 import com.example.cs205_smu_bird_app.sprites.BombManager;
 import com.example.cs205_smu_bird_app.sprites.Bomb;
+import com.example.cs205_smu_bird_app.sprites.ParticleExplosion;
+import com.example.cs205_smu_bird_app.sprites.ParticleManager;
 import com.example.cs205_smu_bird_app.sprites.Score;
 
 
@@ -46,6 +48,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
     private GameOver gameOver;
     private ObstacleManager obstacleManager;
     private BombManager bombManager;
+    private ParticleManager particleManager;
     private Rect birdPosition;
     private HashMap<Obstacle, List<Rect>> obstaclePositions = new HashMap<>();
     private HashMap<Bomb, List<Rect>> bombPositions = new HashMap<>();
@@ -90,6 +93,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         gameOver = new GameOver(getResources(), dm.heightPixels, dm.widthPixels);
         gameMessage = new GameMessage(getResources(), dm.heightPixels, dm.widthPixels);
         scoreSprite = new Score(getResources(), dm.heightPixels, dm.widthPixels);
+        particleManager = new ParticleManager();
 
     }
 
@@ -154,6 +158,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
                 bird.update();
                 obstacleManager.update();
                 bombManager.update();
+                particleManager.update();
 
                 //System.out.println("GameManager update call");
                 break;
@@ -175,6 +180,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
                     obstacleManager.draw(canvas);
                     bombManager.draw(canvas);
                     scoreSprite.draw(canvas); // Move scoreSprite.draw(canvas) here
+                    particleManager.draw(canvas);
                     calculateCollision();
                     break;
 
@@ -217,6 +223,8 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
                 bird.onTouchEvent();
                 mpWing.start();
                 vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE)); // Vibrate for 100 milliseconds
+                ParticleExplosion p = new ParticleExplosion(bird.getBirdX(), bird.getBirdY(), 25);
+                particleManager.addEffect(p);
                 break;
 
             case INITIAL:

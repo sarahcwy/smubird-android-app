@@ -80,9 +80,17 @@ public class Bird implements sprite{
     public void onTouchEvent() {
         if (!collision) {
             currentFallingSpeed = flappyBoost;
-
         }
     }
+
+    public int getBirdX() {
+        return birdX;
+    }
+
+    public int getBirdY() {
+        return birdY;
+    }
+
     public void collision() {
         collision = true;
     }
