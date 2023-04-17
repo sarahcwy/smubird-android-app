@@ -30,7 +30,6 @@ public class ObstacleManager implements ObstacleCallback{
         interval = (int) resources.getDimension(R.dimen.obstacle_interval);
         speed = (int) resources.getDimension(R.dimen.obstacle_speed);
         obstacles.add(new Obstacle(resources,screenHeight,screenWidth, this));
-
     }
 
     public void update() {

@@ -73,23 +73,6 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         initGame();
     }
 
-//    // New synchronized method for updating the score
-//    private void updateScore(int value) {
-//        scoreMutex.lock();
-//        try {
-//            score += value;
-//            if (score < 0) {
-//                score = 0;
-//            }
-//        }
-//        finally {
-//            scoreSprite.updateScore(score);
-//            scoreMutex.unlock();
-//        }
-//
-//    }
-
-
     private void initGame() {
         score = 0;
         birdPosition = new Rect();
@@ -106,7 +89,6 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         gameMessage = new GameMessage(getResources(), dm.heightPixels, dm.widthPixels);
         scoreSprite = new Score(getResources(), dm.heightPixels, dm.widthPixels);
 
-
     }
 
     private void initSounds() {
@@ -116,7 +98,6 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         mpHit = MediaPlayer.create(getContext(), R.raw.hit);
         mpWing = MediaPlayer.create(getContext(), R.raw.wing);
         mpDieTest = MediaPlayer.create(getContext(), R.raw.dietest);
-
     }
 
     @Override
@@ -125,6 +106,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
             thread = new MainThread(holder, this);
             //Prevents crashing when I exit to home screen and go back to app since the thread will stop!
             //Resets thread at the back of the game
+
         }
         //add method to know when thread is started & running
         thread.setRunning(true);
@@ -147,6 +129,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         while (retry) {
             try {
                 thread.setRunning(false);
+                scoreCounter.stopThreads();//stop both threads on game over
                 thread.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -158,10 +141,12 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
     //Collision logic is that bird,obstacle etc will callbackto update pos to gameManager
     //GM will then calculate collision and do handling
     public void update() {
+
         switch(gameState) {
             case PLAYING:
                 // Update the background
                 background.update();
+
                 //place bird sprite somewhere on screen
                 bird.update();
                 obstacleManager.update();
@@ -201,14 +186,13 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
                     bombManager.draw(canvas);
                     gameOver.draw(canvas);
                     scoreSprite.draw(canvas);
+                    scoreCounter.setScore(0);
+                    scoreSprite.collision(getContext().getSharedPreferences(APP_NAME, Context.MODE_PRIVATE)); // let SS know collision
                     break;
             }
 
         }
     }
-
-
-
 
 
     @Override
@@ -261,6 +245,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
     public void removeObstacle(Obstacle obstacle) {
         obstaclePositions.remove(obstacle);
         scoreCounter.increment();
+//        scoreSprite.updateScore(scoreCounter.getScore());
         scoreSprite.updateScore(scoreCounter.getScore());
         mpPoint.start();
     }
@@ -303,10 +288,10 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
             for (Bomb bomb : bombPositions.keySet()) {
                 Rect bombRectangle = bombPositions.get(bomb).get(0);
                 if (birdPosition.intersect(bombRectangle)) {        //bird collided with bomb
-                    removeBomb(bomb); // Remove bomb
+                    //removeBomb(bomb); // Remove bomb
                     mpDie.start();    // Play the sound
                     //When u hit a bomb, then decrease the score
-//                    score -= 5;
+                    bombPositions.remove(bomb);
                     scoreCounter.decrement();
                     scoreSprite.updateScore(scoreCounter.getScore());
                 }
@@ -317,9 +302,9 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
             // Implement Game Over Here!
             gameState = GameState.GAME_OVER;
             bird.collision();
-            scoreSprite.collision(getContext().getSharedPreferences(APP_NAME, Context.MODE_PRIVATE)); // let SS know collision
+//            scoreSprite.collision(getContext().getSharedPreferences(APP_NAME, Context.MODE_PRIVATE)); // let SS know collision
             mpHit.start(); // play hit!
-            scoreCounter.stopThreads();//stop both threads on game over
+
             mpHit.setOnCompletionListener(new MediaPlayer.OnCompletionListener() {
                 @Override
                 public void onCompletion(MediaPlayer mp) {

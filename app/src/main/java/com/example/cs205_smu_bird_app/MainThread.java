@@ -10,6 +10,7 @@ public class MainThread extends Thread{
     private static Canvas canvas;
     private int targetFPS = 60; //hardcoded Frame Rate
     //SurfaceHolder allow for manipulation of canvas
+    //scoreCounter scoreCounter = new scoreCounter();
     public MainThread(SurfaceHolder surfaceHolder, GameManager gameManager){
         this.surfaceHolder = surfaceHolder;
         this.gameManager = gameManager;
@@ -19,12 +20,16 @@ public class MainThread extends Thread{
 
         running = isRunning;
     }
+
     @Override
     public void run() {
         long startTime;
         long timeMillis;
         long waitTime;
         long targetTime = 1000 / targetFPS;
+
+        //put scoreThread here
+
 
         while (running) {
             startTime = System.nanoTime();

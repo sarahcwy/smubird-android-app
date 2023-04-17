@@ -7,14 +7,17 @@ public class scoreCounter {
     private Thread decrementThread; // Thread for decrementing the score
     private boolean incrementFlag = false; // Flag to indicate whether to increment the score
     private boolean decrementFlag = false; // Flag to indicate whether to decrement the score
+    private boolean isIncrementThreadRunning = false; // Flag to indicate if increment thread is running
+    private boolean isDecrementThreadRunning = false; // Flag to indicate if decrement thread is running
 
     // Constructor to initialize the threads
+
     public scoreCounter() {
         incrementThread = new Thread(() -> {
             while (!Thread.currentThread().isInterrupted()) {
                 synchronized (mutex) { // Acquire lock on mutex
                     if (incrementFlag) {
-                        score += 10; // Increment the score
+                        score += 100; // Increment the score
                         incrementFlag = false; // Reset increment flag
                     }
                 } // Release lock on mutex
@@ -32,17 +35,37 @@ public class scoreCounter {
             }
         });
     }
+    // Method to check if increment thread is running
+    public boolean isIncrementThreadRunning() {
+        return isIncrementThreadRunning;
+    }
+
+    // Method to check if decrement thread is running
+    public boolean isDecrementThreadRunning() {
+        return isDecrementThreadRunning;
+    }
 
     // Method to start the threads
     public void startThreads() {
+//        if (score > 0) {
+//            score = 0;
+//        }
         incrementThread.start();
         decrementThread.start();
+        isIncrementThreadRunning = true; // Set increment thread running flag
+        isDecrementThreadRunning = true; // Set decrement thread running flag
     }
 
     // Method to stop the threads
     public void stopThreads() {
         incrementThread.interrupt();
         decrementThread.interrupt();
+        isIncrementThreadRunning = false; // Reset increment thread running flag
+        isDecrementThreadRunning = false; // Reset decrement thread running flag
+        //In stopThread
+//        if (score > 0) {
+//            score = 0;
+//        }
     }
 
     // Method to manually increment the score
@@ -51,6 +74,7 @@ public class scoreCounter {
             incrementFlag = true; // Set increment flag
         } // Release lock on mutex
     }
+
 
     // Method to manually decrement the score
     public void decrement() {
@@ -64,5 +88,9 @@ public class scoreCounter {
         synchronized (mutex) { // Acquire lock on mutex
             return score; // Return the current score
         } // Release lock on mutex
+    }
+
+    public void setScore(int score) {
+        this.score = score;
     }
 }
