@@ -6,27 +6,52 @@
     android:layout_height="match_parent"
     tools:context=".testOptions">
 
-    <Button
-        android:id="@+id/back2game"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Back to game"
-        android:layout_below="@id/volume_seekbar"
-        android:layout_marginStart="16dp" />
+        android:layout_centerInParent="true"
+        android:gravity="center_horizontal"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/mute_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Mute Music"
-        android:layout_marginTop="16dp"
-        android:layout_marginStart="16dp" />
+        <Button
+            android:id="@+id/back2game"
+            android:layout_width="180dp"
+            android:layout_height="50dp"
+            android:text="Back to game"/>
 
-    <SeekBar
-        android:id="@+id/volume_seekbar"
+        <Button
+            android:id="@+id/mute_button"
+            android:layout_width="180dp"
+            android:layout_height="50dp"
+            android:text="Mute Music"
+            android:layout_marginStart="16dp"/>
+
+    </LinearLayout>
+
+    <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/mute_button"
-        android:layout_marginTop="16dp" />
+        android:gravity="center_horizontal"
+        android:orientation="vertical"
+        android:background="#F5F5DC">
+
+        <TextView
+            android:id="@+id/volume_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Adjust Volume"
+            android:layout_marginTop="270dp"
+            android:textSize="20sp"
+            android:textStyle="bold"/>
+
+        <SeekBar
+            android:id="@+id/volume_seekbar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:thumbTint="@android:color/holo_blue_light"/>
+
+    </LinearLayout>
 
 </RelativeLayout>
