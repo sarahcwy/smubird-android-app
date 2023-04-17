@@ -66,6 +66,7 @@ public class testOptions extends AppCompatActivity {
 
         audioManager = (AudioManager) getSystemService(AUDIO_SERVICE);
 
+        //volume slider bar to control volume via touchEvent
         volumeSeekBar = (SeekBar) findViewById(R.id.volume_seekbar);
         int maxVolume = audioManager.getStreamMaxVolume(AudioManager.STREAM_MUSIC);
         int currentVolume = audioManager.getStreamVolume(AudioManager.STREAM_MUSIC);

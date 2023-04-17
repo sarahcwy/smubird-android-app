@@ -27,9 +27,10 @@ public class MainActivity extends Activity {
     public void openOptions() {
         Intent intent = new Intent(this, testOptions.class);
         intent.putExtra("isMusicMuted", isMusicMuted);
-        startActivityForResult(intent, REQUEST_CODE_TEST_OPTIONS);
+        startActivityForResult(intent, REQUEST_CODE_TEST_OPTIONS);          //initialises activity options (separate screen)
     }
 
+// waits for the onCLick response from options
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_CODE_TEST_OPTIONS && resultCode == RESULT_OK) {
@@ -58,13 +59,16 @@ public class MainActivity extends Activity {
         });
 
         mediaPlayer = MediaPlayer.create(MainActivity.this, R.raw.bgm2);
+        //setting up and playing of BGM
         mediaPlayer.setLooping(true);
         updateAudioPlayback();
 
         MobileAds.initialize(this, "ca-app-pub-9057526686789846~7828440247");
+        //addition of google ad code with the test key
         mAdView = findViewById(R.id.adView);
         AdRequest adRequest = new AdRequest.Builder().build();
         mAdView.loadAd(adRequest);
+        //loading of googleAD
     }
 
     @Override

@@ -38,7 +38,7 @@ public class MainThread extends Thread{
                 //get ref to canvas
                 canvas = surfaceHolder.lockCanvas();
                 synchronized (surfaceHolder) {
-                    gameManager.update();
+                    gameManager.update();       //repeatedly updates & draw the game events
                     gameManager.draw(canvas);
                 }
             } catch (Exception e) {
@@ -54,7 +54,7 @@ public class MainThread extends Thread{
             }
 
             timeMillis = (System.nanoTime() - startTime) / 1000000; //since nanotime so 1 mil divided by
-            //dont allow run more than 60FPS, just wait for next
+            //dont allow run more than 60FPS and therefore prevent errors
             waitTime = targetTime - timeMillis;
 
             try {

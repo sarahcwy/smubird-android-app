@@ -85,8 +85,8 @@ public class ParticleExplosion implements sprite {
         {
             if(p.active)
             {
-                paint.setColor(Color.argb(p.alpha, p.red, p.green, p.blue));
-                canvas.drawCircle(p.x_postion, p.y_postion, RandomInt(25), paint);
+                paint.setColor(Color.argb(p.alpha, p.red, p.green, p.blue));            //set color of particle
+                canvas.drawCircle(p.x_postion, p.y_postion, RandomInt(25), paint); //draws a circle with the particle's position and a random radius on the canvas
             }
         }
     }
@@ -95,9 +95,12 @@ public class ParticleExplosion implements sprite {
     public void update() {
         long currentTime = System.nanoTime();
         float deltaTime = (currentTime - previousFrameTime) / 1000000000.f; // convert nanoseconds to secs
+        //time elapsed since the last frame
         previousFrameTime = currentTime;
+        //updates the positions of the particles based on their velocities
         timePassed += deltaTime;
 
+        //updates the currentLife and alpha properties of the particles to control their fading out effect
         for(Particle p: particles)
         {
             if(p.active)

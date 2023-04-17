@@ -56,11 +56,11 @@ public class ObstacleManager implements ObstacleCallback{
         //need way for obstacle to call into obstacle manager
         //use interface
         obstacles.remove(obstacle);         //IMPT: THIS CAN BE CALLED WHILE FOR LOOP IN UPDATE IS EXECUTING BECAUSE DIFF THREAD!
-        callback.removeObstacle(obstacle);
+        callback.removeObstacle(obstacle);      //informs gameManager to remove obstacle from the game
     }
 
     @Override
     public void updatePosition(Obstacle obstacle, ArrayList<Rect> positions) {
-        callback.updatePosition(obstacle, positions);
+        callback.updatePosition(obstacle, positions);       //informs game manager to update obstacle position in game
     }
 }

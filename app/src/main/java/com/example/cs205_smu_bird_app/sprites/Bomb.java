@@ -19,7 +19,6 @@ public class Bomb implements sprite{
     //Change obstacleMinPosition if we choose to NOT use ads
     private Bitmap image;
     private BombCallback callback;
-
     private int yPosition;
 
     public int getX() {
@@ -56,7 +55,7 @@ public class Bomb implements sprite{
         yPosition = 0;
         height = image.getHeight();
         //create randomness to bomb
-        Random random = new Random(System.currentTimeMillis());
+        Random random = new Random(System.currentTimeMillis());     //allows us to use random to set the bombs on the screen
         int minYPosition = obstacleMinPosition;
         int maxYPosition = screenHeight - obstacleMinPosition - height;
         if (maxYPosition > minYPosition) {
@@ -79,7 +78,7 @@ public class Bomb implements sprite{
         if (xPosition <= 0 - width - 2 * headExtraWidth) {
             callback.bombOffScreen(this);
         } else {
-            ArrayList<Rect> positions = new ArrayList<>();
+            ArrayList<Rect> positions = new ArrayList<>();          //arrayList to store bomb Objects
             int smallerWidth = (int) (width * 0.05);
             int smallerHeight = (int) (height * 0.05);
             int xOffset = (width - smallerWidth) / 20;

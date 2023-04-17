@@ -22,7 +22,7 @@ public class BombManager implements BombCallback{
     private int speed; //speed of obstacle
     private GameManagerCallback callback;
 
-    private static final int MAX_BOMBS_ON_SCREEN = 3;
+    private static final int MAX_BOMBS_ON_SCREEN = 5;
 
     public BombManager(Resources resources, int screenHeight, int screenWidth, GameManagerCallback callback) {
         this.resources = resources;
@@ -45,7 +45,7 @@ public class BombManager implements BombCallback{
 
     public void update() {
         if (bombs.size() < MAX_BOMBS_ON_SCREEN) {
-            progress += speed;
+            progress += speed;          //if fewer bombs than max on screen
             if (progress > interval) {
                 progress = 0;
                 // Randomly decide if a new bomb should be created

@@ -32,18 +32,17 @@ public class Bird implements sprite{
         this.screenHeight = screenHeight;
         this.callback = callback;
         //xPos of bird with instantiation of integer since float
-        birdX = (int) resources.getDimension(R.dimen.bird_x);
+        birdX = (int) resources.getDimension(R.dimen.bird_x);           //x coord of bird top-left
         birdY = screenHeight / 2;
-        birdWidth = (int) resources.getDimension(R.dimen.bird_width);
+        birdWidth = (int) resources.getDimension(R.dimen.bird_width);       //width & height of the bird
         birdHeight = (int) resources.getDimension(R.dimen.bird_height);
-        gravity = resources.getDimension(R.dimen.gravity); //instantiate gravity
-        flappyBoost = resources.getDimension(R.dimen.flappyBoost);
-
+        gravity = resources.getDimension(R.dimen.gravity);              //instantiate gravity
+        flappyBoost = resources.getDimension(R.dimen.flappyBoost);          //boost when onCLick event
 
         //Sprite with a bitmap with the size of the image file that we have as bird_down
         Bitmap birdBmpDown = BitmapFactory.decodeResource(resources, R.drawable.bird_down);
         //To scale:
-        bird_down = Bitmap.createScaledBitmap(birdBmpDown, birdWidth, birdHeight, false);
+        bird_down = Bitmap.createScaledBitmap(birdBmpDown, birdWidth, birdHeight, false);       //to call the images and set it as variables for sprites
         Bitmap birdBmpUp = BitmapFactory.decodeResource(resources, R.drawable.bird_up);
         bird_up = Bitmap.createScaledBitmap(birdBmpUp, birdWidth, birdHeight, false);
     }
@@ -67,7 +66,6 @@ public class Bird implements sprite{
             if (birdY + bird_down.getHeight() < screenHeight){
                 birdY += currentFallingSpeed;
                 currentFallingSpeed += gravity;
-
             }
         } else {
             birdY += currentFallingSpeed;
@@ -79,7 +77,7 @@ public class Bird implements sprite{
 
     public void onTouchEvent() {
         if (!collision) {
-            currentFallingSpeed = flappyBoost;
+            currentFallingSpeed = flappyBoost;      //when tap, give flappyBoost to simulate a jump!
         }
     }
 

@@ -33,7 +33,6 @@ public class Score implements sprite{
     private boolean collision = false;
 
 
-
     public Score(Resources resources, int screenHeight, int screenWidth) {
         this.screenHeight = screenHeight;
         this.screenWidth = screenWidth;
@@ -117,12 +116,6 @@ public class Score implements sprite{
         if (topScore < score) {
             prefs.edit().putInt(SCORE_PREF, score).apply();     //store the score if new top score
 
-        }
-    }
-    public void decreaseScore(int decrement) {
-        this.score -= decrement;
-        if (this.score < 0) {
-            this.score = 0;
         }
     }
 

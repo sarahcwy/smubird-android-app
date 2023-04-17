@@ -63,16 +63,17 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
 
     private long invincibilityTime = 0;
 
-    private Lock scoreMutex = new ReentrantLock();
+    //private Lock scoreMutex = new ReentrantLock();          //usage of mutex
 
     scoreCounter scoreCounter = new scoreCounter();
-    Vibrator vibrator = getContext().getSystemService(Vibrator.class);
+    Vibrator vibrator = getContext().getSystemService(Vibrator.class);      //creation of vibrator object
 
     public GameManager(Context context, AttributeSet attributeSet) {
         super(context);
         initSounds();
         getHolder().addCallback(this);
-        thread = new MainThread(getHolder(), this);
+        thread = new MainThread(getHolder(), this);         //usage of threads to represent mainThread
+        //mainthread is used to update & render objects on the screen
         dm = new DisplayMetrics();
         ((Activity)context).getWindowManager().getDefaultDisplay().getMetrics(dm);
         initGame();
@@ -98,6 +99,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
     }
 
     private void initSounds() {
+        //Initialisation of customs sounds to use in game to add interactiveness
         mpPoint = MediaPlayer.create(getContext(), R.raw.point);
         mpSwoosh = MediaPlayer.create(getContext(), R.raw.swoosh);
         mpDie = MediaPlayer.create(getContext(), R.raw.die);
@@ -107,6 +109,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         mpBomb = MediaPlayer.create(getContext(), R.raw.bomb);
     }
 
+    //Overriding of surface created to have a central location to control creation of threads
     @Override
     public void surfaceCreated(SurfaceHolder holder) {
         if (thread.getState() == Thread.State.TERMINATED) {
@@ -118,7 +121,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         //add method to know when thread is started & running
         thread.setRunning(true);
         thread.start();
-        scoreCounter.startThreads();
+        scoreCounter.startThreads();        //start the separate scoreCounter threads
     }
 
     @Override
@@ -126,17 +129,16 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
 
     }
 
+    //Overriding of surface created to have a central location to control deletion of threads
     @Override
     public void surfaceDestroyed(SurfaceHolder holder) {
         //when no longer update UI, stop background from running
-        //might get exception since thread
-
         //so try stop, and keep trying since no thread can keep running in BG after finished game
         boolean retry = true;
         while (retry) {
             try {
                 thread.setRunning(false);
-                scoreCounter.stopThreads();//stop both threads on game over
+                scoreCounter.stopThreads();//stop both scoreCounter threads on game over
                 thread.join();
             } catch (InterruptedException e) {
                 e.printStackTrace();
@@ -179,7 +181,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
                     bird.draw(canvas);
                     obstacleManager.draw(canvas);
                     bombManager.draw(canvas);
-                    scoreSprite.draw(canvas); // Move scoreSprite.draw(canvas) here
+                    scoreSprite.draw(canvas);
                     particleManager.draw(canvas);
                     calculateCollision();
                     break;
@@ -222,6 +224,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
             case PLAYING:
                 bird.onTouchEvent();
                 mpWing.start();
+                //call vibrator effect, particle explosion effect, and where we add additional explosions
                 vibrator.vibrate(VibrationEffect.createOneShot(100, VibrationEffect.DEFAULT_AMPLITUDE)); // Vibrate for 100 milliseconds
                 ParticleExplosion p = new ParticleExplosion(bird.getBirdX(), bird.getBirdY(), 25);
                 particleManager.addEffect(p);
@@ -255,8 +258,8 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
     @Override
     public void removeObstacle(Obstacle obstacle) {
         obstaclePositions.remove(obstacle);
-        scoreCounter.increment();
-//        scoreSprite.updateScore(scoreCounter.getScore());
+        scoreCounter.increment();       //every time an obstacle is removed from the screen
+        //implies the char has made it past an obstacle, the points are incremented
         scoreSprite.updateScore(scoreCounter.getScore());
         mpPoint.start();
     }
@@ -277,21 +280,23 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
 
     //calculate collision occured or not
     public void calculateCollision() {
+        //Invincibility time is just a variable for testing; its currently 0
         if (System.currentTimeMillis() < invincibilityTime) {
             return;
         }
         boolean collision = false;
 
-        if (birdPosition.bottom > dm.heightPixels) {
+        //if a collision happened
+        if (birdPosition.bottom > dm.heightPixels) {            //bird position has gone below the height of the screen
             collision = true;
         } else {
             for (Obstacle obstacle : obstaclePositions.keySet()) {
                 Rect bottomRectangle = obstaclePositions.get(obstacle).get(0);
                 Rect topRectangle = obstaclePositions.get(obstacle).get(1);
                 if (birdPosition.right > bottomRectangle.left && birdPosition.left < bottomRectangle.right && birdPosition.bottom > bottomRectangle.top) {
-                    collision = true;
+                    collision = true;           //bird right edge > left edge of bottom rectangle of obstacle
                 } else if (birdPosition.right > topRectangle.left && birdPosition.left < topRectangle.right && birdPosition.top < topRectangle.bottom) {
-                    collision = true;
+                    collision = true;           //bird left edge < right edge of bottom rectangle of obstacle
                 }
             }
 
@@ -309,7 +314,6 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
                 }
             }
         }
-
         if (collision) {
             // Implement Game Over Here!
             gameState = GameState.GAME_OVER;
