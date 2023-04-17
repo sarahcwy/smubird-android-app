@@ -56,6 +56,8 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
     private MediaPlayer mpDieTest;
     private MediaPlayer mpDie;
 
+    private MediaPlayer mpBomb;
+
     private long invincibilityTime = 0;
 
     private Lock scoreMutex = new ReentrantLock();
@@ -98,6 +100,7 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
         mpHit = MediaPlayer.create(getContext(), R.raw.hit);
         mpWing = MediaPlayer.create(getContext(), R.raw.wing);
         mpDieTest = MediaPlayer.create(getContext(), R.raw.dietest);
+        mpBomb = MediaPlayer.create(getContext(), R.raw.bomb);
     }
 
     @Override
@@ -289,7 +292,8 @@ public class GameManager extends SurfaceView implements SurfaceHolder.Callback, 
                 Rect bombRectangle = bombPositions.get(bomb).get(0);
                 if (birdPosition.intersect(bombRectangle)) {        //bird collided with bomb
                     //removeBomb(bomb); // Remove bomb
-                    mpDie.start();    // Play the sound
+//                    mpDie.start();    // Play the sound
+                    mpBomb.start();
                     //When u hit a bomb, then decrease the score
                     bombPositions.remove(bomb);
                     scoreCounter.decrement();
